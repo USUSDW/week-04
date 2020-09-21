@@ -2,6 +2,7 @@ package com.github.ususdw.week04.data;
 
 import com.github.ususdw.week04.LocalJsonAuthorStore;
 import com.google.gson.annotations.SerializedName;
+import java.util.Optional;
 
 public class Article {
 
@@ -52,7 +53,12 @@ public class Article {
     }
 
     public Author getAuthor() {
-        return authorStore.getAuthors().stream().filter((it) -> it.getName().equalsIgnoreCase(authorName)).findAny().get();
+        for (Author it : authorStore.getAuthors()) {
+            if (it.getName().equalsIgnoreCase(authorName)) {
+                return it;
+            }
+        }
+        return null;
     }
 
     public void setAuthor(String author) {

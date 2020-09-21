@@ -32,7 +32,9 @@ public class RemoteJsonArticleStore {
             String text = FileUtils.readAll(reader);
             Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
             List<Article> articles =  gson.fromJson(text, listType);
-            articles.parallelStream().forEach(it -> it.setAuthorStore(authorStore));
+            for (Article it : articles) {
+                it.setAuthorStore(authorStore);
+            }
             return articles;
         } catch (Exception ex) {
             return null;

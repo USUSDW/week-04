@@ -34,7 +34,9 @@ public class LocalJsonArticleStore {
             String text = FileUtils.readAll(reader);
             reader.close();
             List<Article> articles =  gson.fromJson(text, listType);
-            articles.parallelStream().forEach(it -> it.setAuthorStore(authorStore));
+            for (Article it : articles) {
+                it.setAuthorStore(authorStore);
+            }
             return articles;
         } catch (IOException e) {
             return List.of();

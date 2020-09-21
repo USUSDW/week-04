@@ -16,6 +16,7 @@ import java.util.List;
 
 public class RemoteJsonArticleStore {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
 
     private final String url;
     private final LocalJsonAuthorStore authorStore;
@@ -27,13 +28,12 @@ public class RemoteJsonArticleStore {
     }
 
     public List<Article> downloadArticles() {
-        try (InputStream stream = new URL(url).openStream()) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-            String text = FileUtils.readAll(reader);
-            Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
+        try (var stream = new URL(url).openStream()) {
+            var reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            var text = FileUtils.readAll(reader);
             List<Article> articles =  gson.fromJson(text, listType);
-            for (Article it : articles) {
-                it.setAuthorStore(authorStore);
+            for (var article : articles) {
+                article.setAuthorStore(authorStore);
             }
             return articles;
         } catch (Exception ex) {

@@ -26,8 +26,8 @@ public class LocalJsonAuthorStore {
             return List.of();
         }
         try {
-            FileReader reader = new FileReader(file);
-            String text = FileUtils.readAll(reader);
+            var reader = new FileReader(file);
+            var text = FileUtils.readAll(reader);
             reader.close();
             return gson.fromJson(text, listType);
         } catch (IOException e) {

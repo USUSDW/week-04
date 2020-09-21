@@ -30,12 +30,12 @@ public class LocalJsonArticleStore {
             return List.of();
         }
         try {
-            FileReader reader = new FileReader(file);
-            String text = FileUtils.readAll(reader);
+            var reader = new FileReader(file);
+            var text = FileUtils.readAll(reader);
             reader.close();
             List<Article> articles =  gson.fromJson(text, listType);
-            for (Article it : articles) {
-                it.setAuthorStore(authorStore);
+            for (var article : articles) {
+                article.setAuthorStore(authorStore);
             }
             return articles;
         } catch (IOException e) {

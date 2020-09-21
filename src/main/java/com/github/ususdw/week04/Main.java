@@ -9,9 +9,9 @@ public class Main {
     private HashMap<String, Author> authors;
 
     public static void main(String[] args) {
-        LocalJsonAuthorStore authorStore = new LocalJsonAuthorStore("src/main/resources/authors.json");
-        RemoteJsonArticleStore remoteArticleStore = new RemoteJsonArticleStore("https://gist.githubusercontent.com/hhenrichsen/c63287e1780258e270c13e806c4608b5/raw/94747096ee347805ed90e5d9d7aa19bcc6583ecd/data.json", authorStore);
-        LocalJsonArticleStore articleStore = new LocalJsonArticleStore("src/main/resources/articles.json", authorStore);
+        var authorStore = new LocalJsonAuthorStore("src/main/resources/authors.json");
+        var remoteArticleStore = new RemoteJsonArticleStore("https://gist.githubusercontent.com/hhenrichsen/c63287e1780258e270c13e806c4608b5/raw/94747096ee347805ed90e5d9d7aa19bcc6583ecd/data.json", authorStore);
+        var articleStore = new LocalJsonArticleStore("src/main/resources/articles.json", authorStore);
         System.out.println(remoteArticleStore.downloadArticles());
         System.out.println(articleStore.getArticles().get(0).getAuthor());
     }

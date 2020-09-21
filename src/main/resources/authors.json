@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Hunter Henrichsen",
+    "social": {
+      "github": "hhenrichsen"
+    },
+    "bio": "Computer Science, Math, and English student. I like to write, whether that's code, fiction, or somewhere in between."
+  },
+  {
+    "name": "David Gilbertson",
+    "social": {
+      "twitter": "D__Gilbertson",
+      "medium": "david.gilbertson"
+    },
+    "bio": "I like web stuff."
+  },
+  {
+    "name": "Darren Burns",
+    "social": {
+      "dev": "_darrenburns"
+    },
+    "bio": "A software engineer living in Edinburgh, Scotland. I'm passionate about programming, learning new things (and sharing what I learn), digital art, and good sci-fi/fantasy books!"
+  }
+]

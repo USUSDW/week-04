@@ -42,6 +42,9 @@ public class CommandHandler {
         else if (string.equalsIgnoreCase("h")) {
             displayHelp();
         }
+        else if (string.equalsIgnoreCase("w")) {
+            viewAuthor();
+        }
         else {
             System.out.println("Unknown command '" + string + ".'");
             displayHelp();

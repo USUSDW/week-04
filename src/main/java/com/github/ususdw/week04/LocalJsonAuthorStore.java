@@ -7,8 +7,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,4 +37,18 @@ public class LocalJsonAuthorStore {
         }
     }
 
+    public void addAuthor(Author author) throws IOException {
+        if (!file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            file.createNewFile();
+        }
+        else {
+            var authors = getAuthors();
+            authors.add(author);
+            String text = gson.toJson(authors);
+            var writer = new FileWriter(file, StandardCharsets.UTF_8, false);
+            writer.write(text);
+            writer.close();
+        }
+    }
 }

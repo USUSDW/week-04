@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RemoteJsonArticleStore {
+public class RemoteJsonArticleStore implements ImmutableStore<Article> {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
 
@@ -27,7 +27,8 @@ public class RemoteJsonArticleStore {
         this.authorStore = authorStore;
     }
 
-    public List<Article> downloadArticles() {
+    @Override
+    public List<Article> getAll() {
         try (var stream = new URL(url).openStream()) {
             var reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
             var text = FileUtils.readAll(reader);

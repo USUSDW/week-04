@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalJsonArticleStore {
+public class LocalJsonArticleStore implements MutableStore<Article> {
 
     private final File file;
     private final Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
@@ -27,7 +27,7 @@ public class LocalJsonArticleStore {
         this.authorStore = authorStore;
     }
 
-    public List<Article> getArticles() {
+    public List<Article> getAll() {
         if (!file.exists()) {
             return List.of();
         }
@@ -45,18 +45,23 @@ public class LocalJsonArticleStore {
         }
     }
 
-    public void addArticle(Article article) throws IOException {
-        if (!file.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            file.createNewFile();
+    public void add(Article article) {
+        try {
+            if (!file.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                file.createNewFile();
+            } else {
+                var articles = getAll();
+                articles.add(article);
+                String text = gson.toJson(articles);
+                var writer = new FileWriter(file, StandardCharsets.UTF_8, false);
+                writer.write(text);
+                writer.close();
+            }
         }
-        else {
-            var articles = getArticles();
-            articles.add(article);
-            String text = gson.toJson(articles);
-            var writer = new FileWriter(file, StandardCharsets.UTF_8, false);
-            writer.write(text);
-            writer.close();
+        catch (Exception ex) {
+            System.err.println("Failed to save article:");
+            ex.printStackTrace();
         }
     }
 }

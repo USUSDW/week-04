@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalJsonAuthorStore {
+public class LocalJsonAuthorStore implements MutableStore<Author> {
     private final File file;
     private final Type listType = new TypeToken<ArrayList<Author>>(){}.getType();
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -23,7 +23,7 @@ public class LocalJsonAuthorStore {
         file = new File(path);
     }
 
-    public List<Author> getAuthors() {
+    public List<Author> getAll() {
         if (!file.exists()) {
             return List.of();
         }
@@ -37,18 +37,25 @@ public class LocalJsonAuthorStore {
         }
     }
 
-    public void addAuthor(Author author) throws IOException {
-        if (!file.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            file.createNewFile();
+    public void add(Author author) {
+        try {
+
+            if (!file.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                file.createNewFile();
+            }
+            else {
+                var authors = getAll();
+                authors.add(author);
+                String text = gson.toJson(authors);
+                var writer = new FileWriter(file, StandardCharsets.UTF_8, false);
+                writer.write(text);
+                writer.close();
+            }
         }
-        else {
-            var authors = getAuthors();
-            authors.add(author);
-            String text = gson.toJson(authors);
-            var writer = new FileWriter(file, StandardCharsets.UTF_8, false);
-            writer.write(text);
-            writer.close();
+        catch (Exception ex) {
+            System.err.println("Failed to save author:");
+            ex.printStackTrace();
         }
     }
 }

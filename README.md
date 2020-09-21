@@ -65,15 +65,28 @@ project, and in code that we can call from inside of the application.
 
 ## Loose Coupling
 
-So what's this loose coupling thing, then? Well, right now our code has a bunch
-of different places it has to reach out to get data. Take for example the
-CommandHandler constructor. It has to specifically reach out to both the Local
-and Remote JSON stores by name. If we want to add a different type, say a
-local YAML storage or a remote API storage, we would have to adjust multiple
-files in multiple places. And what about the Article class? Notice how it 
-specifically takes a LocalJsonAuthorStore? If we add another way to store 
-authors, we have to add another constructor to each of them, and change how
-the function to find its author works. 
+Couplers are the pieces on train cars that hold them together. The neat thing
+about train couplings are that they're loose enough to let you switch cars out
+as often as you want, but tight enough to keep them together while in transit.
+
+![Couplers on a train](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Carrage_couplings_on_ABT_Railway_%283939380014%29.jpg/340px-Carrage_couplings_on_ABT_Railway_%283939380014%29.jpg)
+
+*Photo by Tom Worthington on Wikimedia. [(Source)](https://en.wikipedia.org/wiki/File:Carrage_couplings_on_ABT_Railway_(3939380014).jpg)*
+
+Well, right now our code has a bunch of different places it has to reach out to
+get data. Take for example the CommandHandler constructor. It has to
+specifically reach out to both the Local and Remote JSON stores by name. If we
+want to add a different type, say a local YAML storage or a remote API storage,
+we would have to adjust multiple files in multiple places. And what about the
+Article class? Notice how it specifically takes a LocalJsonAuthorStore? If we
+add another way to store authors, we have to add another constructor to each of
+them, and change how the function to find its author works. 
+
+What we've done here is locked the train couplers together, welded them
+together, wrapped them in steel chains, then welded the chains to the coupler.
+In order to get thse two cars apart, we're going to need to get out bolt
+cutters, maybe even a full pneumatic cutter. If this train stops abruptly, these
+cars aren't going to look pretty.
 
 That's not good.
 
@@ -81,6 +94,8 @@ So what can we do to fix that? This is where decoupling these things can help.
 Before you read past this point, think about how you would solve that. We'll 
 discuss this in the club meeting, but if you're reading this you're probably
 not there.
+
+Let's get out those bolt cutters.
 
 ## The Solution
 
@@ -133,7 +148,7 @@ public class LocalJsonArticleStore implements MutableStore<Article> {
             var reader = new FileReader(file);
             var text = FileUtils.readAll(reader);
             reader.close();
-            List<Article> articles =  gson.fromJson(text, listType);
+            List<Article> articles = gson.fromJson(text, listType);
             for (var article : articles) {
                 article.setAuthorStore(authorStore);
             }
@@ -158,11 +173,10 @@ public class LocalJsonArticleStore implements MutableStore<Article> {
     }
 }
 ```
-In Article we can now take an 
-`ImmutableStore<Author>` instead of a LocalJsonAuthorStore and have the 
-flexibility to add a RemoteJsonAuthorStore instead. There's already one
-in the project, so let's go ahead and make that adjustment, and give it this
-URL:
+In Article we can now take an `ImmutableStore<Author>` instead of a
+LocalJsonAuthorStore and have the flexibility to add a RemoteJsonAuthorStore
+instead. There's already one in the project, so let's go ahead and make that
+adjustment, and give it this URL:
 
 ```text
 https://gist.githubusercontent.com/hhenrichsen/c63287e1780258e270c13e806c4608b5/raw/3e0290937dcf6aaa178a2bf3fee1685506921579/authors.json
@@ -180,4 +194,4 @@ There's one last quirk about Interfaces that make them even more powerful. They
 give us the ability to use lambdas and function references to implement them,
 and allow for us to implement them inline. 
 
-This is what we're going to talk about in week 5! See you next week.
+This is what we're going to talk about in week 5! See you then!

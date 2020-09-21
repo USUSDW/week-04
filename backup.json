@@ -1,0 +1,23 @@
+[
+  {
+    "id": "js-functional-programming",
+    "name": "Functional Programming in JavaScript",
+    "preview": "Functional programming is a really useful tool to have in your toolbox. For me, it's changed how I design solutions to a bunch of different problems.",
+    "source": "https://dev.to/hunter/functional-programming-in-javascript-3j0p",
+    "author": "Hunter Henrichsen"
+  },
+  {
+    "id": "harvesting-credit-cards",
+    "name": "I’m harvesting credit card numbers and passwords from your site. Here’s how.",
+    "source": "https://medium.com/hackernoon/im-harvesting-credit-card-numbers-and-passwords-from-your-site-here-s-how-9a8cb347c5b5?_branch_match_id=836039621556742800",
+    "preview": "The following is a true story. Or maybe it’s just based on a true story. Perhaps it’s not true at all.",
+    "author": "David Gilbertson"
+  },
+  {
+    "id": "shell-tools",
+    "name": "10 Tools to Power Up Your Command Line",
+    "source": "https://dev.to/_darrenburns/10-tools-to-power-up-your-command-line-4id4",
+    "preview":  "This post is the first in a series of showcases of some of the best non-standard command line tools I've discovered in recent years. If you ever make use of the command line, you'll probably find that at least one item on this page will make your life easier.",
+    "author": "Darren Burns"
+  }
+]

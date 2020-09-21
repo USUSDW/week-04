@@ -66,4 +66,118 @@ project, and in code that we can call from inside of the application.
 ## Loose Coupling
 
 So what's this loose coupling thing, then? Well, right now our code has a bunch
-of different places it has to reach out to to get data. Take for example the
+of different places it has to reach out to get data. Take for example the
+CommandHandler constructor. It has to specifically reach out to both the Local
+and Remote JSON stores by name. If we want to add a different type, say a
+local YAML storage or a remote API storage, we would have to adjust multiple
+files in multiple places. And what about the Article class? Notice how it 
+specifically takes a LocalJsonAuthorStore? If we add another way to store 
+authors, we have to add another constructor to each of them, and change how
+the function to find its author works. 
+
+That's not good.
+
+So what can we do to fix that? This is where decoupling these things can help.
+Before you read past this point, think about how you would solve that. We'll 
+discuss this in the club meeting, but if you're reading this you're probably
+not there.
+
+## The Solution
+
+What I propose is that we use two interfaces. One for MutableStores (LocalJson),
+and one for ImmutableStores (RemoteJsonArticleStore). MutableStores will 
+provide two methods: `add`, and `getAll`, where ImmutableStores only get one
+method, `add`. If you're familiar with inheritance, there's also another
+trick we can do to cut the interfaces down even further: we can have 
+MutableStore extend ImmutableStore, allowing MutableStores to be used as 
+ImmutableStores. Here's what I propose:
+
+`ImmutableStore.java`
+```java
+public interface ImmutableStore<T> {
+    List<T> getAll();
+}
+```
+
+`MutableStore.java`
+```java
+public interface MutableStore<T> extends ImmutableStore<T> {
+    add(T item);
+}
+```
+
+This is exactly what we're going for. We can pretty easily adjust each of the
+stores to `implement` their paired interface, then only talk about the 
+interface where we use it in code. 
+
+`LocalJsonArticleStore.java`
+```java
+public class LocalJsonArticleStore implements MutableStore<Article> {
+
+    private final File file;
+    private final Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final LocalJsonAuthorStore authorStore;
+
+    public LocalJsonArticleStore(String path,
+        ImmutableStore<Author> authorStore) {
+        file = new File(path);
+        this.authorStore = authorStore;
+    }
+
+    public List<Article> getAll() {
+        if (!file.exists()) {
+            return List.of();
+        }
+        try {
+            var reader = new FileReader(file);
+            var text = FileUtils.readAll(reader);
+            reader.close();
+            List<Article> articles =  gson.fromJson(text, listType);
+            for (var article : articles) {
+                article.setAuthorStore(authorStore);
+            }
+            return articles;
+        } catch (IOException e) {
+            return List.of();
+        }
+    }
+
+    public void add(Article article) throws IOException {
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        else {
+            var articles = getAll();
+            articles.add(article);
+            String text = gson.toJson(articles);
+            var writer = new FileWriter(file, StandardCharsets.UTF_8, false);
+            writer.write(text);
+            writer.close();
+        }
+    }
+}
+```
+In Article we can now take an 
+`ImmutableStore<Author>` instead of a LocalJsonAuthorStore and have the 
+flexibility to add a RemoteJsonAuthorStore instead. There's already one
+in the project, so let's go ahead and make that adjustment, and give it this
+URL:
+
+```text
+https://gist.githubusercontent.com/hhenrichsen/c63287e1780258e270c13e806c4608b5/raw/3e0290937dcf6aaa178a2bf3fee1685506921579/authors.json
+```
+
+The benefits are really impressive for this 'small' change. We now can easily
+swap out which implementation we want, and even add new ones without causing
+our program to need to be adjusted everywhere. We can continue with this 
+refactor much further than these two changes, such as making CommandHandler 
+take lists of stores for articles and authors, regardless of where they come
+from or where they store things. 
+
+## What's Next
+There's one last quirk about Interfaces that make them even more powerful. They
+give us the ability to use lambdas and function references to implement them,
+and allow for us to implement them inline. 
+
+This is what we're going to talk about in week 5! See you next week.

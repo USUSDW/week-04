@@ -45,7 +45,7 @@ public class LocalJsonArticleStore {
         }
     }
 
-    public void addAuthor(Article article) throws IOException {
+    public void addArticle(Article article) throws IOException {
         if (!file.exists()) {
             //noinspection ResultOfMethodCallIgnored
             file.createNewFile();

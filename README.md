@@ -189,6 +189,10 @@ refactor much further than these two changes, such as making CommandHandler
 take lists of stores for articles and authors, regardless of where they come
 from or where they store things. 
 
+I've done some of these refactors on the `refactored` branch. If you cloned
+the project, you can run `git checkout refactored` to explore the project at
+this point.
+
 ## What's Next
 There's one last quirk about Interfaces that make them even more powerful. They
 give us the ability to use lambdas and function references to implement them,

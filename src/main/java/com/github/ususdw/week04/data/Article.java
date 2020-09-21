@@ -1,5 +1,6 @@
 package com.github.ususdw.week04.data;
 
+import com.github.ususdw.week04.ImmutableStore;
 import com.github.ususdw.week04.LocalJsonAuthorStore;
 import com.google.gson.annotations.SerializedName;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class Article {
     private String preview;
     private String source;
 
-    private LocalJsonAuthorStore authorStore;
+    private ImmutableStore<Author> authorStore;
 
     @Override
     public String toString() {
@@ -27,7 +28,7 @@ public class Article {
     }
 
     public Article(String id, String name, String authorName, String preview, String source,
-        LocalJsonAuthorStore authorStore) {
+        ImmutableStore<Author> authorStore) {
         this.id = id;
         this.name = name;
         this.authorName = authorName;
@@ -53,7 +54,7 @@ public class Article {
     }
 
     public Author getAuthor() {
-        for (Author it : authorStore.getAuthors()) {
+        for (Author it : authorStore.getAll()) {
             if (it.getName().equalsIgnoreCase(authorName)) {
                 return it;
             }
@@ -81,7 +82,7 @@ public class Article {
         this.source = source;
     }
 
-    public void setAuthorStore(LocalJsonAuthorStore authorStore) {
+    public void setAuthorStore(ImmutableStore<Author> authorStore) {
         this.authorStore = authorStore;
     }
 }

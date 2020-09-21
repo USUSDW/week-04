@@ -1,6 +1,7 @@
 package com.github.ususdw.week04;
 
 import com.github.ususdw.week04.data.Article;
+import com.github.ususdw.week04.data.Author;
 import com.github.ususdw.week04.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,10 +20,10 @@ public class LocalJsonArticleStore implements MutableStore<Article> {
     private final File file;
     private final Type listType = new TypeToken<ArrayList<Article>>(){}.getType();
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final LocalJsonAuthorStore authorStore;
+    private final ImmutableStore<Author> authorStore;
 
     public LocalJsonArticleStore(String path,
-        LocalJsonAuthorStore authorStore) {
+        ImmutableStore<Author> authorStore) {
         file = new File(path);
         this.authorStore = authorStore;
     }

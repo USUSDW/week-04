@@ -4,28 +4,30 @@ import com.github.ususdw.week04.data.Article;
 import com.github.ususdw.week04.data.Author;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class CommandHandler {
     private final Scanner scanner = new Scanner(System.in);
     private final HashMap<String, Article> articles = new HashMap<>();
     private final HashMap<String, Author> authors = new HashMap<>();
-    private final LocalJsonAuthorStore authorStore = new LocalJsonAuthorStore("src/main/resources/authors.json");
-    private final RemoteJsonArticleStore remoteArticleStore = new RemoteJsonArticleStore("https://gist.githubusercontent.com/hhenrichsen/c63287e1780258e270c13e806c4608b5/raw/94747096ee347805ed90e5d9d7aa19bcc6583ecd/data.json", authorStore);
-    private final LocalJsonArticleStore articleStore = new LocalJsonArticleStore("src/main/resources/articles.json", authorStore);
+    private final MutableStore<Article> articleDestination;
+    private final MutableStore<Author> authorDestination = new MemoryAuthorStore();
 
-    public CommandHandler() {
-        var authorList = authorStore.getAll();
-        for (var author : authorList) {
-            authors.put(author.getName(), author);
+    public CommandHandler(MutableStore<Article> articleDestination, List<ImmutableStore<Article>> articles, List<ImmutableStore<Author>> authors) {
+        this.articleDestination = articleDestination;
+        for (var source : authors) {
+            authorDestination.duplicate(source);
+            for (var author : source.getAll()) {
+                this.authors.put(author.getName(), author);
+            }
         }
-        var remoteArticles = remoteArticleStore.getAll();
-        for (var article : remoteArticles) {
-            articles.put(article.getId(), article);
-        }
-        var localArticles = articleStore.getAll();
-        for (var article : localArticles) {
-            articles.put(article.getId(), article);
+        for (var source : articles) {
+            articleDestination.duplicate(source);
+            for (var article : source.getAll()) {
+                article.setAuthorStore(authorDestination);
+                this.articles.put(article.getId(), article);
+            }
         }
     }
 
@@ -103,8 +105,8 @@ public class CommandHandler {
             System.out.println("Canceled.");
             return;
         }
-        Article article = new Article(id, title, authorName, preview, source, authorStore);
-        articleStore.add(article);
+        Article article = new Article(id, title, authorName, preview, source, authorDestination);
+        articleDestination.add(article);
     }
 
     private void viewAuthor() {

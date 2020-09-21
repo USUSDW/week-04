@@ -15,15 +15,15 @@ public class CommandHandler {
     private final LocalJsonArticleStore articleStore = new LocalJsonArticleStore("src/main/resources/articles.json", authorStore);
 
     public CommandHandler() {
-        var authorList = authorStore.getAuthors();
+        var authorList = authorStore.getAll();
         for (var author : authorList) {
             authors.put(author.getName(), author);
         }
-        var remoteArticles = remoteArticleStore.downloadArticles();
+        var remoteArticles = remoteArticleStore.getAll();
         for (var article : remoteArticles) {
             articles.put(article.getId(), article);
         }
-        var localArticles = articleStore.getArticles();
+        var localArticles = articleStore.getAll();
         for (var article : localArticles) {
             articles.put(article.getId(), article);
         }
@@ -104,11 +104,7 @@ public class CommandHandler {
             return;
         }
         Article article = new Article(id, title, authorName, preview, source, authorStore);
-        try {
-            articleStore.addArticle(article);
-        } catch (IOException e) {
-            System.out.println("Error while adding author.");
-        }
+        articleStore.add(article);
     }
 
     private void viewAuthor() {
